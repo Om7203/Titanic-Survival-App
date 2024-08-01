@@ -1,4 +1,4 @@
-# Team DASH: Titanic Survivor Prediction App
+# Titanic Survivor Prediction App
 
 ## Project Introduction
 
