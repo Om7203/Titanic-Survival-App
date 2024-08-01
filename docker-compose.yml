@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/app:/app
+      - models_data:/app/models
+    ports:
+      - "8000:8000"
+    command: ["sh", "-c", "while [ ! -f /app/models/logistic_regression_model.pkl ]; do sleep 1; done && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"]
+    depends_on:
+      - train_models
+
+  train_models:
+    build:
+      context: ./train_models
+      dockerfile: Dockerfile
+    volumes:
+      - models_data:/app/models
+    command: ["sh", "-c", "python train.py && touch /app/models/.training_done"]
+
+volumes:
+  models_data:

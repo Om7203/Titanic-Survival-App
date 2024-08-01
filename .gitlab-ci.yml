@@ -1,0 +1,32 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test_backend:
+  image: python:3.11
+  stage: test
+  services:
+    - name: docker:19.03.12
+      alias: docker
+  before_script:
+    - pip install pytest
+  script:
+    - pytest
+
+test_frontend:
+  image: cypress/base:10
+  stage: test
+  script:
+    - npm install
+    - npm run test:frontend
+
+build:
+  stage: build
+  script:
+    - docker-compose build
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d
